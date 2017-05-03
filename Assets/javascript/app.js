@@ -1,7 +1,10 @@
 var toDoCount = 0;
 
-function renderButtons() {
+$(document).ready(function(){
 
+
+
+  console.log("running render buttons");
     // Delete the the input for button once it is added to nav bar
     // $("#movies-view").empty();
     // (this is necessary otherwise you will have repeat buttons)
@@ -29,23 +32,21 @@ function renderButtons() {
         // Write code to add the new movie into the movies array
         // create a new variable to hold the button
         console.log(term);
-        var buttonText = $("<p>");
+        // var buttonText = $("<p>");
 
-        buttonText.attr("id", "item-" + toDoCount);
-        buttonText.append(" " + term);
-
-
-
-
-
-        var termButton = $("<button>");
-
-        // Append the button to the to do item
-        buttonText = buttonText.prepend(termButton);
+        var termButton = $("<button class='gif-button'>");
+        termButton.attr("id", "item-" + toDoCount);
+        termButton.attr("data-term",  term);
+        termButton.text(term);
 
 
-        // Add the button and to do item to the to-dos div
-        $("#movies-view").append(termButton);
+
+
+
+
+
+        // Add the button with term to the buttons div
+        $("#gif-buttons").append(termButton);
 
         // Clear the textbox when done
         $("#hashtag-input").val("");
@@ -66,18 +67,21 @@ function renderButtons() {
     // This function handles events where the add movie button is clicked
 // getting giphs from clicking button
 
-    $("button").on("click", function() {
+    $("#gif-buttons").on("click", ".gif-button", function(e) {
+      console.log(e)
 
-        var person = $(this).attr("data-person"); // Storing our giphy API URL for a random cat image
+        var person = $(this).attr("data-term"); // Storing our giphy API URL for a random cat image
+        console.log(person);
+        
+        var queryURL = "http://api.giphy.com/v1/gifs/search?q="+ person + "&api_key=dc6zaTOxFJmzC&limit=10";
 
-        var queryURL = "http://api.giphy.com/v1/gifs/search?q="
-        person = "&api_key=dc6zaTOxFJmzC&limit=10";
+        console.log(queryURL)
         // Perfoming an AJAX GET request to our queryURL
-        $.ajax({url: queryURL,
-                method: "GET"
-            })
+        $.ajax({
+          url: queryURL,
+          method: "GET"
+        }).done(function(response) {
             // After the data from the AJAX request comes back
-            .done(function(response) {
 
 
                 var results = response.data;
@@ -95,7 +99,7 @@ function renderButtons() {
                         var rating = results[i].rating;
                         // Creating a paragraph tag with the result item's rating
 
-                        var p = $("<p>").text("Rating: " rating);
+                        var p = $("<p>").text("Rating: " + rating);
                         // Creating an image tag
 
                         var personImage = $("<img>");
@@ -109,7 +113,7 @@ function renderButtons() {
                         $("#images").prepend(gifDiv);
                     }
                 }
-            });
+        });
     });
 // animating gif on click
     $(".gif").on("click", function() {
@@ -130,3 +134,4 @@ function renderButtons() {
 
     // Calling the renderButtons function to display the initial list of movies
     // renderButtons();
+});
